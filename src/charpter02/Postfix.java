@@ -5,8 +5,8 @@ class Parser {
     int at;
 
     public Parser() throws IOException {
-        lookahead = System.in.read();
         at = 0;
+        moveForward();
     }
 
     void expr() throws IOException {
@@ -35,8 +35,10 @@ class Parser {
     }
 
     void moveForward() throws IOException {
-        lookahead = System.in.read();
-        at++;
+        do {
+            lookahead = System.in.read();
+            at++;
+        } while (lookahead == ' ');
     }
 
     void error(String msg) throws IOException{
