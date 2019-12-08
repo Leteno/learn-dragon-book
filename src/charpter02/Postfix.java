@@ -2,9 +2,11 @@ import java.io.*;
 
 class Parser {
     static int lookahead;
+    int at;
 
     public Parser() throws IOException {
         lookahead = System.in.read();
+        at = 0;
     }
 
     void expr() throws IOException {
@@ -24,12 +26,24 @@ class Parser {
         if (Character.isDigit((char)lookahead)) {
             System.out.write((char)lookahead); match(lookahead);
         }
-        else throw new Error("syntax error");
+        else error("syntax error");
     }
 
     void match(int t) throws IOException {
-        if (lookahead == t) lookahead = System.in.read();
-        else throw new Error("syntax error");
+        if (lookahead == t) moveForward();
+        else error("syntax error");
+    }
+
+    void moveForward() throws IOException {
+        lookahead = System.in.read();
+        at++;
+    }
+
+    void error(String msg) throws IOException{
+        System.out.write('\n');
+        System.out.write(("Meet error: " + msg + " at " + at).getBytes());
+        System.out.write('\n');
+        throw new Error(msg);
     }
 }
 
