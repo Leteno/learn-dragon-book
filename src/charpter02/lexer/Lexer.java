@@ -19,6 +19,17 @@ public class Lexer {
             else if (peek == '\n') line = line + 1;
             else break;
         }
+        if (peek == '/') {
+            char nextPeek = (char) System.in.read();
+            if (nextPeek == '/') {
+                peek = ' '; // clear peek
+                return commentOneLine();
+            } else {
+                Token t = new Token(peek);
+                peek = nextPeek; // store it.
+                return t;
+            }
+        }
         if (Character.isDigit(peek)) {
             int v = 0;
             do {
@@ -43,6 +54,15 @@ public class Lexer {
         Token t = new Token(peek);
         peek = ' ';
         return t;
+    }
+
+    private Token commentOneLine() throws IOException {
+        char ch = (char) System.in.read();
+        StringBuffer comment = new StringBuffer(ch);
+        for (; ch != '\n'; ch = (char) System.in.read()) {
+            comment.append(ch);
+        }
+        return new Comment(comment.toString());
     }
 
     public static final void main(String[] args) throws IOException {
