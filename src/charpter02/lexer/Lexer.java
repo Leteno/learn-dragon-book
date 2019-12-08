@@ -24,6 +24,9 @@ public class Lexer {
             if (nextPeek == '/') {
                 peek = ' '; // clear peek
                 return commentOneLine();
+            } else if (nextPeek == '*') {
+                peek = ' ';
+                return commentMultiLine();
             } else {
                 Token t = new Token(peek);
                 peek = nextPeek; // store it.
@@ -63,6 +66,23 @@ public class Lexer {
             comment.append(ch);
         }
         return new Comment(comment.toString());
+    }
+
+    private Token commentMultiLine() throws IOException {
+        char ch = (char) System.in.read();
+        StringBuffer comment = new StringBuffer(ch);
+        for (;; ch = (char) System.in.read()) {
+            if (ch == '*') {
+                char another = (char) System.in.read();
+                if (another == '/') {
+                    return new Comment(comment.toString());
+                }
+                comment.append(ch);
+                comment.append(another);
+                continue;
+            }
+            comment.append(ch);
+        }
     }
 
     public static final void main(String[] args) throws IOException {
