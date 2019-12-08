@@ -72,13 +72,13 @@ public class Lexer {
         char ch = (char) System.in.read();
         StringBuffer comment = new StringBuffer(ch);
         for (;; ch = (char) System.in.read()) {
-            if (ch == '*') {
+            while (ch == '*') {
                 char another = (char) System.in.read();
                 if (another == '/') {
                     return new Comment(comment.toString());
                 }
                 comment.append(ch);
-                comment.append(another);
+                ch = another;
                 continue;
             }
             comment.append(ch);
