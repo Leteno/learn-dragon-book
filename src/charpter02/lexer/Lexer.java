@@ -33,6 +33,42 @@ public class Lexer {
                 return t;
             }
         }
+        if (peek == '<') {
+            char nextPeek = (char) System.in.read();
+            if (nextPeek == '=') {
+                return new Operator(Operator.LESS_EQUAL);
+            } else {
+                peek = nextPeek; // don't waste it.
+                return new Operator(Operator.LESS);
+            }
+        }
+        if (peek == '>') {
+            char nextPeek = (char) System.in.read();
+            if (nextPeek == '=') {
+                return new Operator(Operator.GREATER_EQUAL);
+            } else {
+                peek = nextPeek; // don't waste it.
+                return new Operator(Operator.GREATER);
+            }
+        }
+        if (peek == '=') {
+            char nextPeek = (char) System.in.read();
+            if (nextPeek == '=') {
+                return new Operator(Operator.EQUAL_EQUAL);
+            } else {
+                peek = nextPeek; // don't waste it.
+                return new Operator(Operator.EQUAL);
+            }
+        }
+        if (peek == '!') {
+            char nextPeek = (char) System.in.read();
+            if (nextPeek == '=') {
+                return new Operator(Operator.NOT_EQUAL);
+            } else {
+                peek = nextPeek; // don't waste it.
+                return new Operator(Operator.NOT);
+            }
+        }
         if (Character.isDigit(peek)) {
             int v = 0;
             do {
