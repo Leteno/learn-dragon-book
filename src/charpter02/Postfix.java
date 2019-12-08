@@ -23,6 +23,19 @@ class Parser {
     }
 
     void term() throws IOException {
+        digit();
+        while (true) {
+            if (lookahead == '*') {
+                match('*'); term(); System.out.write('*');
+            }
+            else if (lookahead == '/') {
+                match('/'); term(); System.out.write('/');
+            }
+            else return;
+        }
+    }
+
+    void digit() throws IOException {
         if (Character.isDigit((char)lookahead)) {
             System.out.write((char)lookahead); match(lookahead);
         }
