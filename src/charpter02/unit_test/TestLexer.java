@@ -10,6 +10,8 @@ public class TestLexer {
         Report report = new Report();
         report.add(testNumber());
         report.add(testWord());
+        report.add(testComment());
+        report.add(testOperator());
         System.out.println(report.toString());
     }
 
@@ -39,6 +41,44 @@ public class TestLexer {
         for (boolean test : tests) {
             report.add(test);
         }
+        in.close();
+        return report;
+    }
+
+    private static Report testComment() throws IOException {
+        Report report = new Report();
+        InputStream in = buildStream("a // hello world\n" +
+                                    "anotherLine");
+        Lexer lexer = new Lexer(in);
+        lexer.scan();
+        Token comment = lexer.scan();
+        Token another = lexer.scan();
+        boolean [] tests = {
+            UT.assertInstance(comment, Comment.class),
+            UT.assertEqual(((Comment)comment).comment, " hello world"),
+            UT.assertEqual(((Word) another).lexeme, "anotherLine"),
+        };
+        for (boolean test : tests) report.add(test);
+        in.close();
+        return report;
+    }
+
+    private static Report testOperator() throws IOException {
+        Report report = new Report();
+        InputStream in = buildStream("1 < 2\n" +
+                                    "3 <= 4\n");
+        Lexer lexer = new Lexer(in);
+        lexer.scan();
+        Token less = lexer.scan();
+        lexer.scan(); lexer.scan();
+        Token lessEqual = lexer.scan();
+        boolean[] tests = {
+            UT.assertInstance(less, Operator.class),
+            UT.assertInstance(lessEqual, Operator.class),
+            UT.assertEqual(((Operator)less).operator, Operator.LESS),
+            UT.assertEqual(((Operator)lessEqual).operator, Operator.LESS_EQUAL),
+        };
+        for (boolean test : tests) report.add(test);
         in.close();
         return report;
     }
