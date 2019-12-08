@@ -4,13 +4,17 @@ import java.io.*;
 public class Calculator {
     public static final void main(final String[] args) throws Exception {
 
-        final String[] tests = { "1 + 2", "2 * 3", "4 * 5 + 1", "1 + 4 * 5", "1 + 3 + 3 + 4 + 23 + 5 * 6 + 3 * 4" };
+        final String[] tests = { "1 + 2", "2 * 3", "4 * 5 + 1", "1 + 4 * 5", "1 + 3 + 3 + 4 + 23 + 5 * 6 + 3 * 4", "", "1 + 1" };
 
         for (final String test : tests) {
-            System.out.println("calc: " + test);
-            final Calculator calc = new Calculator(test);
-            final int result = calc.calculate();
-            System.out.println("result " + result);
+            try {
+                System.out.println("calc: " + test);
+                final Calculator calc = new Calculator(test);
+                final int result = calc.calculate();
+                System.out.println("result " + result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
