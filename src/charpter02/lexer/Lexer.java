@@ -6,21 +6,23 @@ public class Lexer {
     public int line = 1;
     private char peek = ' ';
     private Hashtable words = new Hashtable();
+    private final InputStream in;
     void reserve(Word t) {
         words.put(t.lexeme, t);
     }
-    public Lexer() {
+    public Lexer(InputStream in) {
+        this.in = in;
         reserve(new Word(Tag.TRUE, "true"));
         reserve(new Word(Tag.FALSE, "false"));
     }
     public Token scan() throws IOException {
-        for (;; peek = (char) System.in.read()) {
+        for (;; peek = (char) read()) {
             if (peek == ' ' || peek == '\t') continue;
             else if (peek == '\n') line = line + 1;
             else break;
         }
         if (peek == '/') {
-            char nextPeek = (char) System.in.read();
+            char nextPeek = (char) read();
             if (nextPeek == '/') {
                 peek = ' '; // clear peek
                 return commentOneLine();
@@ -34,7 +36,7 @@ public class Lexer {
             }
         }
         if (peek == '<') {
-            char nextPeek = (char) System.in.read();
+            char nextPeek = (char) read();
             if (nextPeek == '=') {
                 return new Operator(Operator.LESS_EQUAL);
             } else {
@@ -43,7 +45,7 @@ public class Lexer {
             }
         }
         if (peek == '>') {
-            char nextPeek = (char) System.in.read();
+            char nextPeek = (char) read();
             if (nextPeek == '=') {
                 return new Operator(Operator.GREATER_EQUAL);
             } else {
@@ -52,7 +54,7 @@ public class Lexer {
             }
         }
         if (peek == '=') {
-            char nextPeek = (char) System.in.read();
+            char nextPeek = (char) read();
             if (nextPeek == '=') {
                 return new Operator(Operator.EQUAL_EQUAL);
             } else {
@@ -61,7 +63,7 @@ public class Lexer {
             }
         }
         if (peek == '!') {
-            char nextPeek = (char) System.in.read();
+            char nextPeek = (char) read();
             if (nextPeek == '=') {
                 return new Operator(Operator.NOT_EQUAL);
             } else {
@@ -73,7 +75,7 @@ public class Lexer {
             int v = 0;
             do {
                 v = 10*v + Character.digit(peek, 10);
-                peek = (char) System.in.read();
+                peek = (char) read();
             } while (Character.isDigit(peek));
             return new Num(v);
         }
@@ -81,7 +83,7 @@ public class Lexer {
             StringBuffer b = new StringBuffer();
             do {
                 b.append(peek);
-                peek = (char) System.in.read();
+                peek = (char) read();
             } while (Character.isLetter(peek));
             String s = b.toString();
             Word w = (Word) words.get(s);
@@ -95,21 +97,25 @@ public class Lexer {
         return t;
     }
 
+    int read() throws IOException {
+        return in.read();
+    }
+
     private Token commentOneLine() throws IOException {
-        char ch = (char) System.in.read();
+        char ch = (char) read();
         StringBuffer comment = new StringBuffer(ch);
-        for (; ch != '\n'; ch = (char) System.in.read()) {
+        for (; ch != '\n'; ch = (char) read()) {
             comment.append(ch);
         }
         return new Comment(comment.toString());
     }
 
     private Token commentMultiLine() throws IOException {
-        char ch = (char) System.in.read();
+        char ch = (char) read();
         StringBuffer comment = new StringBuffer(ch);
-        for (;; ch = (char) System.in.read()) {
+        for (;; ch = (char) read()) {
             while (ch == '*') {
-                char another = (char) System.in.read();
+                char another = (char) read();
                 if (another == '/') {
                     return new Comment(comment.toString());
                 }
@@ -122,7 +128,7 @@ public class Lexer {
     }
 
     public static final void main(String[] args) throws IOException {
-        Lexer lexer = new Lexer();
+        Lexer lexer = new Lexer(System.in);
         while (true) {
             Token token = lexer.scan();
             System.out.println(token.toString());
