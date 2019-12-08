@@ -61,24 +61,12 @@ public class Calculator {
     }
 
     int digit() {
-        int val1 = number();
-        while (checkValid(index)) {
-            final char ch = mCode.charAt(index);
-            if (Character.isDigit(ch)) {
-                final int val2 = number();
-                val1 = val1 * 10 + val2;
-                moveForward();
-            } else break;
-        }
-        return val1;
-    }
-
-    int number() {
-        // TODO output error
-        if (mCode.charAt(index) == ' ')
+        int result = 0;
+        if (mCode.charAt(index) == ' ') moveForward();
+        while (checkValid(index) && '0' <= mCode.charAt(index) && mCode.charAt(index) <= '9') {
+            result = result * 10 + (mCode.charAt(index) - '0');
             moveForward();
-        final int result = Character.digit(mCode.charAt(index), 10);
-        moveForward();
+        }
         return result;
     }
 
