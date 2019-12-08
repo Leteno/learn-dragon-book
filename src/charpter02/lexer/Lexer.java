@@ -44,4 +44,12 @@ public class Lexer {
         peek = ' ';
         return t;
     }
+
+    public static final void main(String[] args) throws IOException {
+        Lexer lexer = new Lexer();
+        while (true) {
+            Token token = lexer.scan();
+            System.out.println(token.toString());
+        }
+    }
 }
