@@ -20,6 +20,16 @@ public class UT {
         return result;
     }
 
+    public static boolean assertEqual(float f1, float f2) {
+        float diff = f1 - f2; float threshold = 1e-7f;
+        boolean result = diff > -threshold && diff < threshold;
+        if (!result) {
+            println("assertEqual fail: " + f1 + " " + f2);
+            printCurrentStackTrace();
+        }
+        return result;
+    }
+
     public static boolean assertEqual(String a, String b) {
         boolean result = a == b || (a != null && a.equals(b));
         if (!result) {

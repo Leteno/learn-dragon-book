@@ -12,6 +12,7 @@ public class TestLexer {
         report.add(testWord());
         report.add(testComment());
         report.add(testOperator());
+        report.add(testFloat());
         System.out.println(report.toString());
     }
 
@@ -22,6 +23,24 @@ public class TestLexer {
         Token t1 = lexer.scan();
         report.add(UT.assertInstance(t1, Num.class));
         report.add(UT.assertEqual(((Num) t1).value, 1234));
+        in.close();
+        return report;
+    }
+
+    private static Report testFloat() throws IOException {
+        Report report = new Report();
+        InputStream in = buildStream(".1 .1f 0.1234 0.5678f 1234.5678 1234.5678f");
+        Lexer lexer = new Lexer(in);
+        Token f1 = lexer.scan();
+        report.add(UT.assertInstance(f1, FloatToken.class));
+        report.add(UT.assertEqual(((FloatToken) f1).value, 0.1f));
+
+        report.add(UT.assertEqual(((FloatToken) lexer.scan()).value, 0.1f));
+        report.add(UT.assertEqual(((FloatToken) lexer.scan()).value, 0.1234f));
+        report.add(UT.assertEqual(((FloatToken) lexer.scan()).value, 0.5678f));
+        report.add(UT.assertEqual(((FloatToken) lexer.scan()).value, 1234.5678f));
+        report.add(UT.assertEqual(((FloatToken) lexer.scan()).value, 1234.5678f));
+
         in.close();
         return report;
     }
