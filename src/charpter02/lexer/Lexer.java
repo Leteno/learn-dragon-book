@@ -71,13 +71,8 @@ public class Lexer {
                 return new Operator(Operator.NOT);
             }
         }
-        if (Character.isDigit(peek)) {
-            int v = 0;
-            do {
-                v = 10*v + Character.digit(peek, 10);
-                peek = (char) read();
-            } while (Character.isDigit(peek));
-            return new Num(v);
+        if (Character.isDigit(peek) || peek == '.') {
+            return numberOrFloat();
         }
         if (Character.isLetter(peek)) {
             StringBuffer b = new StringBuffer();
@@ -99,6 +94,56 @@ public class Lexer {
 
     int read() throws IOException {
         return in.read();
+    }
+
+    private Token numberOrFloat() throws IOException {
+        int v = 0;
+        while (Character.isDigit(peek)) {
+            v = 10*v + Character.digit(peek, 10);
+            peek = (char) read();
+        };
+
+        if (peek == '.') {
+            peek = (char) read();
+            int fvalue = 0;
+            int exp = 0;
+            while (Character.isDigit(peek)) {
+                fvalue = fvalue * 10 + Character.digit(peek, 10);
+                ++exp;
+                peek = (char) read();
+            }
+            if (peek == 'f') { // eat the last 'f'
+                peek = (char) read();
+            }
+            return new FloatToken(v + fvalue * floatBase(exp));
+        }
+
+        if (peek == 'f') {
+            peek = (char) read();
+            return new FloatToken(v);
+        }
+
+        return new Num(v);
+    }
+
+    private float floatBase(int exp) {
+        float[] store = {
+            1f,
+            1e-1f,
+            1e-2f,
+            1e-3f,
+            1e-4f,
+            1e-5f,
+            1e-6f,
+            1e-7f,
+            1e-8f,
+            1e-9f,
+            1e-10f,
+        };
+        if (exp < store.length) {
+            return store[exp];
+        }
+        throw new RuntimeException("float exp should be lower than " + (store.length - 1));
     }
 
     private Token commentOneLine() throws IOException {
